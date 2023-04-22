@@ -29,12 +29,12 @@ inline int __cdecl test_failed(const char *_Format, ...){
     return done;
 }
 
-inline int __cdecl DEBUG(const char *_Format, ...){
+inline int __cdecl DEBUG(const char *name, const char *_Format, ...){
     int done = 0;
     if(IS_DEBUGGING){
         va_list arg;
 
-        printf("\033[0;35m DEBUG:\t");
+        printf("\033[0;35m DEBUG (%s): ", name);
 
         va_start(arg, _Format);
         done = vfprintf(stdout, _Format, arg);

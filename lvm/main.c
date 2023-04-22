@@ -22,17 +22,15 @@ static inline uint32_t prog_read(uint32_t address){ return program[address]; }
 
 static inline uint8_t mem_read(uint16_t address){ return memory[address]; }
 static inline uint32_t mem_readn(uint16_t address, int n) {
-    uint32_t val;
+    uint32_t val = 0;
     for(int i = 0; i < n; i++){
-        val = (mem_read(address + n) << 4*n) | val; 
-        DEBUG("%x", val);
+        val = (mem_read(address + i) << 4*i) | val;
     }
     return val;
 }
 static inline void mem_write(uint16_t address, uint8_t val) { memory[address] = val;}
 
-/*
-Registers
+/* Registers
     R0-R7 -> General Purpose Registers
     ESP -> Stack Pointer Register
 
@@ -144,18 +142,18 @@ static inline void LD(uint32_t i){
 /* Load Indirect:
 */
 static inline void LDI(uint32_t i){
-    DEBUG("LDI %s %x", DR(i), IMM24(i));
+    DEBUG("LDI", "LDI %s %x", DR(i), IMM24(i));
 }
 static inline void STI(uint32_t i){
     /*
     0011 KKKK 0000 0000 0000 0000 0000
     OP   ADDR 24-Bit Number
     */
-    DEBUG("STI %x %x", ADDR(i), IMM24(i));
+    DEBUG("STI", "STI %x %x", ADDR(i), IMM24(i));
 
     for(uint16_t j = 0; j < 5; j++){
         mem_write(ADDR(i) + j, LITTLE_ENDIAN_ENCODE(i, j));
-        DEBUG("\tADDR: %d = %x\n", ADDR(i) + j, mem_read(ADDR(i) + j));
+        DEBUG("STI_MEM_WRITE","ADDR: %d = %x", ADDR(i) + j, mem_read(ADDR(i) + j));
     }
 }
 
