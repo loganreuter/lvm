@@ -6,6 +6,7 @@
 */
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 #include "../debug/debug.h"
 
 #define MEMORY_MAX (1 << 16)
@@ -20,6 +21,14 @@ static inline uint32_t prog_read(uint32_t address){ return program[address]; }
 // static inline void i_write(uint32_t address, uint32_t val){ return program[address] = val; }
 
 static inline uint8_t mem_read(uint16_t address){ return memory[address]; }
+static inline uint32_t mem_readn(uint16_t address, int n) {
+    uint32_t val;
+    for(int i = 0; i < n; i++){
+        val = (mem_read(address + n) << 4*n) | val; 
+        DEBUG("%x", val);
+    }
+    return val;
+}
 static inline void mem_write(uint16_t address, uint8_t val) { memory[address] = val;}
 
 /*
@@ -86,6 +95,21 @@ static inline void update_flag(enum regist r){
 }
 
 
+void clear_memory(){
+    memset(memory, 0, sizeof(memory));
+}
+void clear_program(){
+    memset(program, 0, sizeof(program));
+}
+void clear_registers(){
+    memset(reg, 0, sizeof(reg));
+}
+void clear(){
+    clear_memory();
+    clear_program();
+    clear_registers();
+}
+
 /***************************
 Op Codes
 
@@ -116,22 +140,29 @@ static inline void LD(uint32_t i){
     reg[DR(i)] = mem_read(ADDR(i));
     update_flag(DR(i));
 }
+
+/* Load Indirect:
+*/
+static inline void LDI(uint32_t i){
+    DEBUG("LDI %s %x", DR(i), IMM24(i));
+}
 static inline void STI(uint32_t i){
     /*
-    0010 KKKK 0000 0000 0000 0000 0000
+    0011 KKKK 0000 0000 0000 0000 0000
     OP   ADDR 24-Bit Number
     */
     DEBUG("STI %x %x", ADDR(i), IMM24(i));
 
     for(uint16_t j = 0; j < 5; j++){
         mem_write(ADDR(i) + j, LITTLE_ENDIAN_ENCODE(i, j));
-        DEBUG("\tADDR: %d = %x\n", ADDR(i) + j, LITTLE_ENDIAN_ENCODE(i, j));
+        DEBUG("\tADDR: %d = %x\n", ADDR(i) + j, mem_read(ADDR(i) + j));
     }
 }
 
 op_ex_f op_ex[NOPS] = {
     ADD,
     LD,
+    LDI,
     STI
 };
 
