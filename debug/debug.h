@@ -11,7 +11,7 @@ typedef int boolean;
 const boolean IS_DEBUGGING = TRUE;
 
 inline int __cdecl test_passed(){
-    printf("\033[0;32m PASSED\033[0m\n");
+    return printf("\033[0;32m PASSED\033[0m\n");
 }
 
 inline int __cdecl test_failed(const char *_Format, ...){
