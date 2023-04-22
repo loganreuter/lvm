@@ -1,4 +1,5 @@
 #include "../lvm/lvm.h"
+#include <stdio.h>
 
 void test_add(){
     program[0] = 0x20000001; // 0010 0000 000000000000000000000001 (STR $0000 1)
