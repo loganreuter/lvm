@@ -4,7 +4,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-const bool IS_DEBUGGING = true;
+#define TRUE (1);
+#define FALSE (0);
+typedef int boolean;
+
+const boolean IS_DEBUGGING = TRUE;
 
 inline int __cdecl test_passed(){
     printf("\033[0;32m PASSED\033[0m\n");
