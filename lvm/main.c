@@ -36,7 +36,7 @@ static inline void mem_write(uint16_t address, uint8_t val) { memory[address] = 
 
 */
 enum regist{
-    R0 = 0,
+    R0,
     R1,
     R2,
     R3,
@@ -118,7 +118,7 @@ OpCode  DR    Rest of the args
 
 //Macro that extracts the Op Code
 #define OPC(i) ((i) >> 28) //Extracts OpCode
-#define DR(i) (((i)>>25) & 0x7) //Extracts the Destination Register (DR)
+#define DR(i) (((i)>>24) & 0x7) //Extracts the Destination Register (DR)
 #define SR1(i) (((i)>>21) & 0x7)
 #define SR2(i) (((i)>>18) & 0x7)
 #define ADDR(i) (((i)>>21) & 0xF)
@@ -142,7 +142,13 @@ static inline void LD(uint32_t i){
 /* Load Indirect:
 */
 static inline void LDI(uint32_t i){
-    DEBUG("LDI", "LDI %s %x", DR(i), IMM24(i));
+    DEBUG("LDI", "LDI %s x%x", reg_name(DR(i)), IMM24(i));
+
+    reg[DR(i)] = IMM24(i);
+
+    DEBUG("LDI", "%s = x%x", reg_name(DR(i)), reg[DR(i)]);
+
+    update_flag(DR(i));
 }
 static inline void STI(uint32_t i){
     /*
