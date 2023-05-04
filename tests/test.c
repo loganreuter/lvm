@@ -2,8 +2,8 @@
 #include "test.h"
 
 static inline void ldi_check(int *ret, uint32_t *res){
-    DEBUG("ldi_check", "R2 = x%x", reg[R2]);
-    *res = reg[R2];
+    DEBUG("ldi_check", "R2 = x%x", reg[ECX]);
+    *res = reg[ECX];
     *ret = *(res) == 69;
     DEBUG("ldi_check", "RET %d RES x%x", *ret, *res);
 }

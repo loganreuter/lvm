@@ -35,63 +35,71 @@ static inline void mem_write(uint16_t address, uint8_t val) { memory[address] = 
     ESP -> Stack Pointer Register
 
 */
+#define NUM_REGISTERS (16)
 enum regist{
-    R0,
-    R1,
-    R2,
-    R3,
-    R4,
-    R5,
-    R6,
-    R7,
-    ESP,
+    EAX,
+    EBX,
+    ECX,
+    EDX,
+    EEX,
+    EFX,
     RPC,
-    RCND,
-    RCNT
+    ESP,
+    EBP,
+    ESI,
+    EDI,
+    FLAG,
+    CS,
+    DS,
+    HS,
+    SS,
 };
-uint32_t reg[RCNT];
+uint32_t reg[NUM_REGISTERS];
 char *reg_name(enum regist r){
     switch (r)
     {
-    case R0:
-        return "R0";
-    case R1:
-        return "R1";
-    case R2:
-        return "R2";
-    case R3:
-        return "R3";
-    case R4:
-        return "R4";
-    case R5:
-        return "R5";
-    case R6:
-        return "R6";
-    case R7:
-        return "R7";
-    case ESP:
-        return "ESP";
+    case EAX:
+        return "EAX";
+    case EBX:
+        return "EBX";
+    case ECX:
+        return "ECX";
+    case EDX:
+        return "EDX";
+    case EEX:
+        return "EEX";
+    case EFX:
+        return "EFX";
     case RPC:
         return "RPC";
-    case RCND:
-        return "RCND";
-    case RCNT:
-        return "RCNT";
+    case ESP:
+        return "ESP";
+    case EBP:
+        return "EBP";
+    case ESI:
+        return "ESI";
+    case EDI:
+        return "EDI";
+    case FLAG:
+        return "FLAG";
+    case CS:
+        return "CS";
+    case DS:
+        return "DS";
+    case HS:
+        return "HS";
+    case SS:
+        return "SS";
     default:
         return "INVALID";
     }
 }
 
-enum flags {FL_POS = 1 << 0, FL_ZRO = 1 << 1, FL_NEG = 1 << 2};
+enum flags {CF = 0 << 0, PF = 0 << 2, AF = 0 << 4, ZF = 0 << 6, SF = 0 << 7, TF = 0 << 8, IF = 0 << 9, DF = 0 << 10, OF = 0 << 11 };
 static inline void update_flag(enum regist r){
     if (reg[r] == 0)
-        reg[RCND] = FL_ZRO;
-    else if (reg[r] >> 15)
-        reg[RCND] = FL_NEG;
-    else
-        reg[RCND] = FL_POS;
+        reg[FLAG] = ZF;
 }
-
 
 void clear_memory(){
     memset(memory, 0, sizeof(memory));
@@ -117,24 +125,64 @@ OpCode  DR    Rest of the args
 ****************************/
 
 //Macro that extracts the Op Code
-#define OPC(i) ((i) >> 28) //Extracts OpCode
-#define DR(i) (((i)>>24) & 0x7) //Extracts the Destination Register (DR)
-#define SR1(i) (((i)>>21) & 0x7)
-#define SR2(i) (((i)>>18) & 0x7)
+#define OPC(i) ((i) >> 27) //Extracts OpCode
+#define SR1(i) (((i) >> 21) & 0x7) //First source register
+#define SR2(i) (((i)>>18) & 0x7) //Second source register
 #define ADDR(i) (((i)>>21) & 0xF)
-#define IMM24(i) ((i) & 0xFFFFFF) //Extracts the final 24 bits from an instruction
+#define IMM16(i) ((i) & 0xFFFF) //Immediate 16-bit number
 #define LITTLE_ENDIAN_ENCODE(i, s) (((i) >> (s*4))&0xFF)
 
 //define the number of operations
 #define NOPS (16)
 typedef void (*op_ex_f)(uint32_t instruction);
 
+/* ARITHMETIC OPERATIONS */
+#define ARTH_MODE(i) (((i) >> 26) & 0x1)
+
+/* ADD (addition)
+Modes
+0: Adds two registers together (ADD)
+1: Adds a register and 32-bit number together (IADD)
+*/
 static inline void ADD(uint32_t i){
-    reg[DR(i)] = reg[SR1(i)] + reg[SR2(i)];
-    update_flag(DR(i));
+    reg[SR1(i)] = reg[SR1(i)] + (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
+    update_flag(SR1(i));
 }
-static inline void LD(uint32_t i){
-    //0001 XXX KKKK....
+
+/* SUB (subtraction)
+
+*/
+static inline void SUB(uint32_t i){
+    reg[SR1(i)] = reg[SR1(i)] - (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
+    update_flag(SR1(i));
+}
+
+/* MUL (multiplication)
+*/
+static inline void MUL(uint32_t i){
+    reg[SR1(i)] = reg[SR1(i)] * (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
+    update_flag(SR1(i));
+}
+
+/* DIV (division)
+*/
+static inline void DIV(uint32_t i){
+    reg[SR1(i)] = reg[SR1(i)] / (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
+    update_flag(SR1(i));
+}
+
+/* MOD (modulus/remainder)
+*/
+static inline void MOD(uint32_t i){
+    reg[SR1(i)] = reg[SR1(i)] % (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
+    update_flag(SR1(i));
+}
+
+/*
+STORE (STR)
+*/
+static inline void STR(uint32_t i){
+    // 0001 XXX KKKK....
     reg[DR(i)] = mem_read(ADDR(i));
     update_flag(DR(i));
 }
@@ -165,7 +213,7 @@ static inline void STI(uint32_t i){
 
 op_ex_f op_ex[NOPS] = {
     ADD,
-    LD,
+    STR,
     LDI,
     STI
 };

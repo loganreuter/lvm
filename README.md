@@ -40,7 +40,7 @@ There are 16 registers with address ranging from x0-xf
 
 ## Memory Model
 
-## OpCode
+## Assembly Instructions
 Currently OpCodes are stored in the first nibble (4 bits) of the code. However, if need be that could be increased to 5 or 6 bits.
 
 |Num|Code|Binary|Mode|Description|Example|
