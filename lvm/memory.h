@@ -50,4 +50,9 @@ static inline void STR(uint32_t i){
     }
 }
 
+
+static inline void PUSH(uint32_t i){}
+
+static inline void POP(uint32_t i){}
+
 #endif
