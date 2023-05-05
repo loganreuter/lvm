@@ -6,7 +6,6 @@
 
 #define SR1(i) (((i) >> 21) & 0x7) // First source register
 #define SR2(i) (((i) >> 18) & 0x7) // Second source register
-#define ADDR(i) (((i) >> 21) & 0xF)
 
 /* ARITHMETIC OPERATIONS */
 #define ARTH_MODE(i) (((i) >> 26) & 0x1)
@@ -52,6 +51,20 @@ static inline void MOD(uint32_t i)
 {
     reg[SR1(i)] = reg[SR1(i)] % (ARTH_MODE(i)) ? prog_read(++reg[RPC]) : reg[SR2(i)];
     update_flag(SR1(i));
+}
+
+/* INC (Increment)
+*/
+static inline void INC(uint32_t i)
+{
+    reg[SR1(i)]++;
+}
+
+/* DEC (Decrement)
+*/
+static inline void DEC(uint32_t i)
+{
+    reg[SR1(i)]--;
 }
 
 #endif
