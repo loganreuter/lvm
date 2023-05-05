@@ -58,6 +58,7 @@ static inline void MOD(uint32_t i)
 static inline void INC(uint32_t i)
 {
     reg[SR1(i)]++;
+    update_flag(SR1(i));
 }
 
 /* DEC (Decrement)
@@ -65,6 +66,7 @@ static inline void INC(uint32_t i)
 static inline void DEC(uint32_t i)
 {
     reg[SR1(i)]--;
+    update_flag(SR1(i));
 }
 
 #endif

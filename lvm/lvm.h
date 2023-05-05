@@ -14,12 +14,27 @@ op_ex_f op_ex[NOPS] = {
     MOV,
     STR,
     ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD,
+    INC,
+    DEC,
 };
 
-void start()
+void start(uint32_t *ops, int size)
 {
+    //loads instructions into memory
+    for(int i = 0; i < size; i++){
+        program[i] = (*ops)++;
+    }
+
     reg[RPC] = 0x0;
-    int size = 3;
+    reg[CS] = CS_START;
+    reg[DS] = DS_START;
+    reg[HS] = HEAP_START;
+    reg[SS] = STACK_START;
+    reg[ESP] = STACK_START;
 
     while (reg[RPC] < size)
     {

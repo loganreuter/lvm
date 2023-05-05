@@ -36,12 +36,8 @@
 
     void test(TEST *t){
         printf("TEST_%s:\n%s\n", t->name, t->desc);
-        
-        for(int i = 0; i < t->num_of_instr; i++){
-            program[i] = t->instr[i];
-        }
 
-        start();
+        start(t->instr, t->num_of_instr);
 
         int cond = 5;
         uint32_t found;

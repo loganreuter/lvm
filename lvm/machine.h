@@ -7,6 +7,7 @@
 #include "../debug/debug.h"
 
 #define MEMORY_MAX (1 << 16)
+const uint32_t CS_START = 0x0;
 const uint32_t DS_START = 0x0100;
 const uint32_t HEAP_START = 0x1000;
 const uint32_t STACK_START = 0xFFFF;
