@@ -7,9 +7,6 @@
 #define SR1(i) (((i) >> 21) & 0x7) // First source register
 #define SR2(i) (((i) >> 18) & 0x7) // Second source register
 #define ADDR(i) (((i) >> 21) & 0xF)
-#define LITTLE_ENDIAN_ENCODE(i, s) (((i) >> (s * 4)) & 0xFF)
-
-// define the number of operations
 
 /* ARITHMETIC OPERATIONS */
 #define ARTH_MODE(i) (((i) >> 26) & 0x1)

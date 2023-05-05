@@ -134,5 +134,6 @@ void clear()
 }
 
 #define OPC(i) ((i) >> 27) //Extracts OpCode
+#define LITTLE_ENDIAN_ENCODE(i, s) (((i) >> (s * 4)) & 0xFF)
 
 #endif
