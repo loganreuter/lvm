@@ -1,5 +1,5 @@
-#ifndef CONDITIONAL_H
-#define CONDITIONAL_H
+#ifndef CONTROL_FLOW_H
+#define CONTROL_FLOW_H
 
     #include "stdint.h"
     #include "machine.h"

@@ -4,8 +4,8 @@
 #include "machine.h"
 #include "stdint.h"
 
-#define SR1(i) (((i) >> 21) & 0x7) // First source register
-#define SR2(i) (((i) >> 18) & 0x7) // Second source register
+#define SR1(i) (((i) >> 21) & 0xF) // First source register
+#define SR2(i) (((i) >> 18) & 0xF) // Second source register
 
 /* ARITHMETIC OPERATIONS */
 #define ARTH_MODE(i) (((i) >> 26) & 0x1)

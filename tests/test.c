@@ -20,7 +20,7 @@ int main(){
     LDI x0 x45
     Expected result: 69
     */
-    TEST ldi = new_test_blank();
+    Test ldi = new_test_blank();
     ldi.name = "LDI";
     ldi.desc = "Checks if LDI stores the correct value in the correct register";
     ldi.instr = &(uint32_t){0b00100010000000000000000001000101};
@@ -31,13 +31,13 @@ int main(){
     STI x0 x1
     Expected result: 1
     */
-    TEST sti = new_test_blank();
+    Test sti = new_test_blank();
     sti.name = "STI";
     sti.desc = "Checks if STI stores the correct value in the correct memory location";
     sti.instr = &(uint32_t){0b00110000000000000000000000000001};
     sti.num_of_instr = 1;
     sti.check = sti_check;
 
-    test(&ldi);
-    test(&sti);
+    run(&ldi);
+    run(&sti);
 }

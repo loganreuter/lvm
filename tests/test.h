@@ -7,18 +7,18 @@
     #include "../debug/debug.h"
 
     typedef void (*Check)(int *ret, uint32_t *found);
-    typedef struct TEST{
+    typedef struct Test{
         const char *name;
         const char *desc;
         uint32_t *instr;
         int num_of_instr;
         Check check;
         int expect;
-    } TEST;
+    } Test;
 
-    TEST new_test(const char *name, uint32_t *instr, int num_of_instr, int expect, Check check)
+    Test new_test(const char *name, uint32_t *instr, int num_of_instr, int expect, Check check)
     {
-        TEST t;
+        Test t;
 
         t.name = name;
         t.instr = instr;
@@ -29,12 +29,12 @@
         return t;
     }
 
-    TEST new_test_blank(){
-        TEST t;
+    Test new_test_blank(){
+        Test t;
         return t;
     }
 
-    void test(TEST *t){
+    void run(Test *t){
         printf("TEST_%s:\n%s\n", t->name, t->desc);
 
         start(t->instr, t->num_of_instr);

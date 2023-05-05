@@ -6,6 +6,7 @@
 //Various operation definition
 #include "memory.h"
 #include "arithmetic.h"
+#include "logical.h"
 
 #define NOPS (16)
 typedef void (*op_ex_f)(uint32_t instruction);
@@ -20,6 +21,11 @@ op_ex_f op_ex[NOPS] = {
     MOD,
     INC,
     DEC,
+    AND,
+    OR,
+    XOR,
+    TEST,
+    NOT,
 };
 
 void start(uint32_t *ops, int size)
