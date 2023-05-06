@@ -1,43 +1,29 @@
 #include "../lvm/lvm.h"
 #include "test.h"
+#include "stdint.h"
 
-static inline void ldi_check(int *ret, uint32_t *res){
-    DEBUG("ldi_check", "R2 = x%x", reg[ECX]);
-    *res = reg[ECX];
+static inline void mov_01_check(int *ret, uint32_t *res){
+    *res = reg[EAX];
     *ret = *(res) == 69;
-    DEBUG("ldi_check", "RET %d RES x%x", *ret, *res);
-}
-
-static inline void sti_check(int *ret, uint32_t *res){
-    *res = mem_readn(0, 5);
-    *ret = *(res) == 1;
-    DEBUG("sti_check", "RET %d RES x%x", *ret, *res);
+    DEBUG("mov_01_check", "RET %d\tRES x%x", *ret, *res);
 }
 
 int main(){
 
-    /* Test LDI command
-    LDI x0 x45
+    /* Test MOV (Mode 01)
+    MOV 01 EAX x45
     Expected result: 69
     */
-    Test ldi = new_test_blank();
-    ldi.name = "LDI";
-    ldi.desc = "Checks if LDI stores the correct value in the correct register";
-    ldi.instr = &(uint32_t){0b00100010000000000000000001000101};
-    ldi.num_of_instr = 1;
-    ldi.check = ldi_check;
+    uint32_t mov_01_instr[2] = {
+        0x02000000, //MOV MODE(01) EAX
+        0x00000045, //69
+    };
+    Test mov_01 = new_test_blank();
+    mov_01.name = "MOV 01";
+    mov_01.desc = "Checks if MOV (set to Mode 01) stores the correct value in the correct register";
+    mov_01.instr = mov_01_instr;
+    mov_01.num_of_instr = 2;
+    mov_01.check = mov_01_check;
 
-    /* Test for the STI command:
-    STI x0 x1
-    Expected result: 1
-    */
-    Test sti = new_test_blank();
-    sti.name = "STI";
-    sti.desc = "Checks if STI stores the correct value in the correct memory location";
-    sti.instr = &(uint32_t){0b00110000000000000000000000000001};
-    sti.num_of_instr = 1;
-    sti.check = sti_check;
-
-    run(&ldi);
-    run(&sti);
+    run(&mov_01);
 }
