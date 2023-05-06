@@ -17,14 +17,15 @@ Modes:
     10 -> Register-Memory
 */
 static inline void MOV(uint32_t i){
+    DEBUG("MOV", "MOV %x %s 0x%x", MEM_MODE(i), reg_name(MEM_SR1(i)), prog_read(reg[RPC]));
     //Checks if Register-IMM32 mode
     if (MEM_MODE(i))
     {
-        reg[MEM_SR1(i)] = prog_read(++reg[RPC]);
+        reg[MEM_SR1(i)] = prog_read(reg[RPC]++);
     } // Checks if Register-Memory mode
     else if (MEM_MODE(i) >> 1)
     {
-        reg[MEM_SR1(i)] = mem_read(++reg[RPC]);
+        reg[MEM_SR1(i)] = mem_read(reg[RPC]++);
     } // checks if Register-Register mode
     else if (MEM_MODE(i) == 0)
     {
@@ -43,11 +44,11 @@ static inline void STR(uint32_t i){
     //Checks if Memory-IMM32
     if (MEM_MODE(i))
     {
-        mem_write(MEM_ADDR(i), prog_read(++reg[RPC]));
+        mem_write(MEM_ADDR(i), prog_read(reg[RPC]++));
     } // Checks if Memory-Memory
     else if (MEM_MODE(i) >> 1)
     {
-        mem_write(MEM_ADDR(i), mem_read(++reg[RPC]));
+        mem_write(MEM_ADDR(i), mem_read(reg[RPC]++));
     }
     else if (MEM_MODE(i) == 0)
     {

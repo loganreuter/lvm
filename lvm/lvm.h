@@ -32,7 +32,7 @@ void start(uint32_t *ops, int size)
 {
     //loads instructions into memory
     for(int i = 0; i < size; i++){
-        program[i] = (*ops)++;
+        program[i] = *(ops++);
     }
 
     reg[RPC] = 0x0;
