@@ -19,12 +19,12 @@ static inline uint32_t prog_read(uint32_t address) { return program[address]; }
 // static inline void i_write(uint32_t address, uint32_t val){ return program[address] = val; }
 
 static inline uint8_t mem_read(uint16_t address) { return memory[address]; }
-static inline uint32_t mem_readn(uint16_t address, int n)
+static inline uint32_t mem_readn(uint16_t address, int size)
 {
     uint32_t val = 0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < size; i++)
     {
-        val = (mem_read(address + i) << 4 * i) | val;
+        val |= (mem_read(address + i) << 8 * i);
     }
     return val;
 }
@@ -135,6 +135,6 @@ void clear()
 }
 
 #define OPC(i) ((i) >> 27) //Extracts OpCode
-#define LITTLE_ENDIAN_ENCODE(i, s) (((i) >> (s * 4)) & 0xFF)
+#define LITTLE_ENDIAN_ENCODE(i, s) (((i) >> (s * 8)) & 0xFF)
 
 #endif

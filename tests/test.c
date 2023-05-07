@@ -12,6 +12,11 @@ static inline void str_01_check(int *ret, uint32_t *res){
     *ret = *(res) == 69;
     DEBUG("str_01_check", "RET %d\tRES x%x", *ret, *res);
 }
+static inline void mov_10_check(int *ret, uint32_t *res){
+    *res = reg[EAX];
+    *ret = *(res) == 69;
+    DEBUG("mov_10_check", "RET %d\tRES x%x", *ret, *res);
+}
 
 int main(){
 
@@ -45,6 +50,24 @@ int main(){
    str_01.num_of_instr = 2;
    str_01.check = str_01_check;
 
+    /* Test MOV (Mode 10)
+    Stores 69 in memory address 0x0
+    Loads value from memory into register EAX
+    */
+    uint32_t mov_10_instr[4] = {
+        0x0a000000, //Store 69 into memory address 0
+        0x45,       //69
+        0x04000000, //Move value of memory address 0 into EAX
+        0x0         //memory address 0
+    };
+    Test mov_10 = new_test_blank();
+    mov_10.name = "MOV 01";
+    mov_10.desc = "Check if MOV (set to Mode 10) loads the right value from memory and stores it in the correct register";
+    mov_10.instr = mov_10_instr;
+    mov_10.num_of_instr = 4;
+    mov_10.check = mov_10_check;
+
     run(&mov_01);
+    run(&mov_10);
     run(&str_01);
 }
